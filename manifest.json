@@ -25,7 +25,7 @@
   },
   "browser_action": {
     "default_icon": {
-      "38": "images/icons/icon38.png"
+      "38": "icons/icon38.png"
     },
     "default_title": "Site history"
   },
