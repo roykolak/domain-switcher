@@ -1,0 +1,47 @@
+<html>
+  <head>
+    <style>
+      .browser-action {
+        width: 38px;
+        height: 38px;
+        border: 1px solid #EEE;
+        position: relative;
+      }
+      .layer {
+        position: absolute;
+      }
+      .layer1 {
+        top: 0px;
+        right: 0px;
+        width: 20px;
+        height: 20px;
+        background: #AAA;
+        z-index: 1;
+      }
+      .layer2 {
+        top: 3px;
+        right: 3px;
+        width: 24px;
+        height: 24px;
+        background: #888;
+        z-index: 2;
+      }
+      .layer3 {
+        left: 0;
+        bottom: 0;
+        width: 30px;
+        height: 30px;
+        background: #333;
+        z-index: 3;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Browser Action Icon</h1>
+    <div class="browser-action">
+      <div class="layer layer1"></div>
+      <div class="layer layer2"></div>
+      <div class="layer layer3"></div>
+    </div>
+  </body>
+</html>

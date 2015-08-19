@@ -1,0 +1,31 @@
+<div class="content">
+  <div class="inner-content">
+    <div class="cards-container">
+      <div class="cards">
+        {{#each items}}
+          <a href="{{url}}" class="tab" data-title="{{title}}" data-url="{{url}}" data-tab-id="{{id}}" tabindex="0">
+            <div class="card">
+              <div class="screenshot"></div>
+              <div class="title">{{title}}</div>
+            </div>
+          </a>
+        {{/each}}
+        <a href="#" class="dummy"></a>
+      </div>
+      <div class="selected-tab">
+        <h1 class="title"></h1>
+        <h3 class="url"></h3>
+      </div>
+    </div>
+    <div class="visits-container">
+      <div class="visits">
+        {{#each visits}}
+          <a href="{{url}}" class="visit" tabindex="0">
+            <div class="card">{{title}}</div>
+          </a>
+        {{/each}}
+        <a href="#" class="dummy_visit_link"></a>
+      </div>
+    </div>
+  </div>
+</div>

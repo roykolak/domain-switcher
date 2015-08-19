@@ -1,0 +1,52 @@
+{
+  "name": "Site history",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "inline site history",
+  "minimum_chrome_version": "34",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": [
+    "chrome://favicon/",
+    "history",
+    "tabs",
+    "storage",
+    "<all_urls>",
+    "unlimitedStorage"
+  ],
+  "background": {
+    "scripts": [
+      "background.js",
+      "bower_components/handlebars/handlebars.min.js"
+    ]
+  },
+  "browser_action": {
+    "default_icon": {
+      "38": "images/icons/icon38.png"
+    },
+    "default_title": "Site history"
+  },
+  "commands": {
+    "toggle": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+X",
+        "mac": "Command+Shift+X"
+      },
+      "description": "Toggle feature foo"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["main.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    "template.html",
+    "style.css"
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+}
