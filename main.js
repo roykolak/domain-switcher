@@ -81,28 +81,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             root.querySelector('a.dummy').addEventListener('focus', function(e) {
               links[0].focus();
             }, true);
-
-            var visitLinks = root.querySelectorAll('a.visit');
-
-            root.querySelector('a.dummy_visit_link').addEventListener('focus', function(e) {
-              visitLinks[0].focus();
-            }, true);
-
-            root.addEventListener('keydown', function(e) {
-              if(e.keyCode == '40' || e.keyCode == '38') {
-                e.preventDefault();
-
-                if(e.keyCode == '38') {
-                  root.querySelector('.inner-content').classList.add('show-history');
-                  visitLinks[0].focus();
-
-                } else if(e.keyCode == '40') {
-                  root.querySelector('.inner-content').classList.remove('show-history');
-                  links[0].focus();
-                }
-              }
-            });
-
           });
         }, 100);
       });

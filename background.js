@@ -37,23 +37,20 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
       var filteredTabs = [];
 
       var buildAndSendResponse = function() {
-        chrome.storage.local.get(request.hostname, function(data) {
-          var xhr = new XMLHttpRequest();
-          xhr.open('GET', chrome.extension.getURL("template.html"), true);
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', chrome.extension.getURL("template.html"), true);
 
-          xhr.onload = function(e) {
-            if (this.status == 200) {
-              var template = Handlebars.compile(this.response);
-              sendResponse(template({
-                root: 'chrome-extension://' + chrome.runtime.id,
-                items: filteredTabs,
-                visits: data[request.hostname] || []
-              }));
-            }
-          };
+        xhr.onload = function(e) {
+          if (this.status == 200) {
+            var template = Handlebars.compile(this.response);
+            sendResponse(template({
+              root: 'chrome-extension://' + chrome.runtime.id,
+              items: filteredTabs
+            }));
+          }
+        };
 
-          xhr.send();
-        });
+        xhr.send();
       };
 
       var index = 0;
@@ -122,35 +119,6 @@ chrome.tabs.onUpdated.addListener(function(id, changeInfo, tab) {
         chrome.tabs.captureVisibleTab(null, {}, function(image) {
           tabData[key] = {screenshot: image};
           chrome.storage.local.set(tabData);
-
-          var domain = tab.url.match(/\w+:\/\/(.*?)\//)[1];
-          chrome.storage.local.get(domain, function(data) {
-            if(data[domain]) {
-              var index = data[domain].findIndex(function(visit) {
-                return visit.url == tab.url;
-              });
-
-              if(index !== -1) {
-                data[domain][index].lastVisited = new Date().toISOString();
-              } else {
-                data[domain].push({
-                  url: tab.url,
-                  title: tab.title,
-                  lastVisited: new Date().toISOString()
-                })
-              }
-
-            } else {
-              data = {};
-              data[domain] = [{
-                url: tab.url,
-                title: tab.title,
-                lastVisited: new Date().toISOString()
-              }];
-            }
-            chrome.storage.local.set(data);
-          });
-
         });
       } else {
         tabData[key] = {screenshot: null};
