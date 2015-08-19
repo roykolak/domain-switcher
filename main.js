@@ -22,11 +22,13 @@ var loadImage = function(el) {
   var data = el.dataset;
   data.cmd = 'read_screenshot';
   chrome.extension.sendRequest(data, function(image) {
+    var titleEl = el.querySelector('.screenshot');
     if(image) {
-      var titleEl = el.querySelector('.screenshot');
       titleEl.style.backgroundImage = 'url(' + image + ')';
     } else {
-      el.classList.add('no-screenshot');
+      var random = Math.ceil(Math.random() * (7 - 0) + 0);
+      titleEl.classList.add('none');
+      titleEl.classList.add('none-' + random);
     }
   });
 }

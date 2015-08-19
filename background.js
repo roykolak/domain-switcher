@@ -77,7 +77,7 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
     case "read_screenshot":
       var key = request.tabId + ':' + request.url;
       chrome.storage.local.get(key, function(data) {
-        sendResponse(data[key].screenshot);
+        sendResponse(data[key] ? data[key].screenshot : false);
       });
       break;
 
