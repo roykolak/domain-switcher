@@ -19,6 +19,7 @@
   ],
   "background": {
     "scripts": [
+      "scripts/background/chrome-api.js",
       "scripts/background/tracker.js",
       "scripts/background/index.js",
       "bower_components/handlebars/handlebars.min.js"

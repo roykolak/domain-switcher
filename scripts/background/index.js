@@ -1,11 +1,5 @@
 var tracker = new Tracker("9ee5f5d9bb3dad93f990c534b4e9efec");
-
-function guid() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-  }
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-}
+var chromeAPI = new ChromeAPI();
 
 chrome.storage.sync.get('userId', function(data) {
   var userId;
@@ -13,7 +7,7 @@ chrome.storage.sync.get('userId', function(data) {
   if(data && data.userId) {
     userId = data.userId;
   } else {
-    userId = guid();
+    userId = Tracker.generateGuid();
     chrome.storage.sync.set({userId: userId});
   }
 
@@ -50,58 +44,28 @@ chrome.runtime.onInstalled.addListener(function() {
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
   switch(request.cmd) {
     case "read_index":
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', chrome.extension.getURL("index.html"), true);
-      xhr.onload = function(e) {
-        if (this.status == 200) {
-          sendResponse(this.response);
+      chromeAPI.requestFile("index.html", function(status, response) {
+        if (status == 200) {
+          sendResponse(response);
         }
-      };
-      xhr.send();
+      });
       break;
 
     case "read_template":
-      var filteredTabs = [];
-
-      var buildAndSendResponse = function() {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', chrome.extension.getURL("template.html"), true);
-
-        xhr.onload = function(e) {
-          if (this.status == 200) {
-            var template = Handlebars.compile(this.response);
+      chromeAPI.getTabsForDomain(request.hostname, function(filteredTabs) {
+        chromeAPI.requestFile("template.html", function(status, response) {
+          if (status == 200) {
+            var template = Handlebars.compile(response);
             sendResponse(template({
               root: 'chrome-extension://' + chrome.runtime.id,
               items: filteredTabs
             }));
           }
-        };
+        });
 
         tracker.showPages({
           numberOfPages: filteredTabs.length
         });
-
-        xhr.send();
-      };
-
-      var index = 0;
-      chrome.windows.getAll(function(windows) {
-        windows.forEach(function(window) {
-          chrome.tabs.query({windowId: window.id}, function(tabs) {
-            index = index + 1;
-
-            var foundTabs = tabs.filter(function(tab) {
-              return tab.url.includes(request.hostname);
-            });
-            filteredTabs = filteredTabs.concat(foundTabs);
-
-            if(windows.length == index) {
-              buildAndSendResponse();
-            }
-          });
-        });
-
-
       });
       break;
 
@@ -113,15 +77,8 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
       break;
 
     case "highlight_tab":
-      chrome.tabs.get(request.tabId, function(tab) {
-        chrome.tabs.highlight({
-          tabs: tab.index,
-          windowId: tab.windowId
-        });
-      });
-
+      chromeAPI.highlightTab(request.tabId);
       tracker.selectPage();
-
       break;
     }
 });
@@ -129,12 +86,7 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
 chrome.commands.onCommand.addListener(function(command) {
   if(command == 'toggle') {
     tracker.open({method: 'Keyboard shortcut'});
-
-    chrome.tabs.query({active: true}, function(tabs) {
-      if(tabs[0]) {
-        chrome.tabs.sendMessage(tabs[0].id, {toggleDisplay: true}, function(response) {});
-      }
-    });
+    chromeAPI.sendMessageToActiveTab({toggleDisplay: true});
   }
 });
 
@@ -177,33 +129,19 @@ chrome.tabs.onRemoved.addListener(function(tabId) {
 
 
 chrome.tabs.onHighlighted.addListener(function(highlightInfo) {
-  chrome.tabs.get(highlightInfo.tabIds[0], function(tab) {
-    var hostname = tab.url.match(/\w+:\/\/(.*?)\//)[0];
-    chrome.tabs.query({}, function(tabs) {
-      var filteredTabs = tabs.filter(function(tab) {
-        return tab.url.includes(hostname);
-      });
+  var tabId = highlightInfo.tabIds[0];
+  chromeAPI.getSimilarTabsForTab(tabId, function(tabs) {
+    var badgeText = '';
 
-      var similarTabs = filteredTabs.length;
-      if(similarTabs > 1) {
-        chrome.browserAction.setBadgeText({
-          text: similarTabs.toString()
-        });
-      } else {
-        chrome.browserAction.setBadgeText({
-          text: ''
-        });
-      }
-    });
+    if(tabs.length > 1) {
+      badgeText = tabs.length.toString()
+    }
+
+    chrome.browserAction.setBadgeText({text: badgeText});
   });
 });
 
 chrome.browserAction.onClicked.addListener(function() {
   tracker.open({method: 'Browser action'});
-
-  chrome.tabs.query({active: true}, function(tabs) {
-    if(tabs[0]) {
-      chrome.tabs.sendMessage(tabs[0].id, {toggleDisplay: true}, function(response) {});
-    }
-  });
+  chromeAPI.sendMessageToActiveTab({toggleDisplay: true});
 });
