@@ -137,6 +137,7 @@
 
     a {
       text-decoration: none;
+      color: #FFF;
     }
     a:focus {
       outline: 0;
@@ -154,8 +155,31 @@
       right: 0;
       min-height: 250px;
     }
+    .top-bar {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      right: 0px;
+      padding: 10px;
+      font-family: 'Helvetica Neue', 'Lucida Grande', sans-serif;
+      color: #DDD;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    .extension {
+      font-size: 13px;
+    }
+    .review {
+      float: right;
+      margin: 0;
+    }
   </style>
   <div class="wrapper">
     <div class="shade"></div>
+    <header class="top-bar">
+      <p class="review">
+        <a href="#">Leave a review?</a>
+      </p>
+      <div class="extension">Site Switcher</div>
+    </header>
   </div>
 </template>

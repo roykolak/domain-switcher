@@ -7,6 +7,14 @@
         border: 1px solid #EEE;
         position: relative;
       }
+      .icon-128 {
+        width: 128px;
+        height: 128px;
+        border: 1px solid #EEE;
+        position: relative;
+        padding: 16px;
+        box-sizing: border-box;
+      }
       .layer {
         position: absolute;
       }
@@ -17,6 +25,7 @@
         height: 20px;
         background: #AAA;
         z-index: 1;
+        border-radius: 1px;
       }
       .layer2 {
         top: 3px;
@@ -25,20 +34,48 @@
         height: 24px;
         background: #888;
         z-index: 2;
+        border-radius: 2px;
       }
       .layer3 {
         left: 0;
         bottom: 0;
         width: 30px;
         height: 30px;
-        background: #333;
+        background: #666;
         z-index: 3;
+        border-radius: 3px;
+      }
+      .icon-128 .layer3 {
+        left: 16px;
+        bottom: 16px;
+        width: 70px;
+        height: 70px;
+      }
+      .icon-128 .layer2 {
+        right: 25px;
+        top: 25px;
+        width: 60px;
+        height: 60px;
+      }
+      .icon-128 .layer1 {
+        right: 16px;
+        top: 16px;
+        width: 50px;
+        height: 50px;
+        border-radius: 2px;
       }
     </style>
   </head>
   <body>
     <h1>Browser Action Icon</h1>
     <div class="browser-action">
+      <div class="layer layer1"></div>
+      <div class="layer layer2"></div>
+      <div class="layer layer3"></div>
+    </div>
+    <br />
+    <br />
+    <div class="icon-128">
       <div class="layer layer1"></div>
       <div class="layer layer2"></div>
       <div class="layer layer3"></div>
