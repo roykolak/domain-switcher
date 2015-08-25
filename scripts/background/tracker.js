@@ -24,10 +24,16 @@ var Tracker;
       });
     },
 
-    browserAction: function() {
-      mixpanel.track('Browser action', {
-        timeStamp: new Date()
-      });
+    open: function(data) {
+      mixpanel.track('Open', data);
+    },
+
+    showPages: function(data) {
+      mixpanel.track('Show pages', data)
+    },
+
+    selectPage: function() {
+      mixpanel.track('Select Page');
     }
   };
 

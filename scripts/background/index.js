@@ -76,7 +76,11 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
             }));
           }
         };
-        mixpanel.track('render');
+
+        tracker.showPages({
+          numberOfPages: filteredTabs.length
+        });
+
         xhr.send();
       };
 
@@ -115,12 +119,17 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
           windowId: tab.windowId
         });
       });
+
+      tracker.selectPage();
+
       break;
     }
 });
 
 chrome.commands.onCommand.addListener(function(command) {
   if(command == 'toggle') {
+    tracker.open({method: 'Keyboard shortcut'});
+
     chrome.tabs.query({active: true}, function(tabs) {
       if(tabs[0]) {
         chrome.tabs.sendMessage(tabs[0].id, {toggleDisplay: true}, function(response) {});
@@ -190,8 +199,8 @@ chrome.tabs.onHighlighted.addListener(function(highlightInfo) {
 });
 
 chrome.browserAction.onClicked.addListener(function() {
-  tracker.browserAction();
-  
+  tracker.open({method: 'Browser action'});
+
   chrome.tabs.query({active: true}, function(tabs) {
     if(tabs[0]) {
       chrome.tabs.sendMessage(tabs[0].id, {toggleDisplay: true}, function(response) {});
