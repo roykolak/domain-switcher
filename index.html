@@ -22,7 +22,7 @@
       background-color: #000;
     }
     .show .shade {
-      opacity: 0.5;
+      opacity: 0.7;
     }
 
     .screenshot {
@@ -65,12 +65,23 @@
       height: 100%;
       flex-flow: row wrap;
     }
-
+    .missing-screenshot-cta {
+      display: none;
+      text-align: center;
+    }
+    .missing-screenshot-cta a {
+      color: #FFF;
+      font-size: 13px;
+      text-decoration: underline;
+    }
     .content {
       z-index: 100;
       width: 90%;
       position: relative;
       overflow: hidden;
+    }
+    .content.missing-screenshot .missing-screenshot-cta {
+      display: block;
     }
     .inner-content {
       top: 0;
@@ -85,14 +96,15 @@
       font-size: 20px;
       font-weight: 400;
       color: #FFF;
-      text-shadow: 0 0 10px #333;
+      text-shadow: 0 0 6px #000;
       margin-bottom: 0;
     }
     .selected-tab .url {
-      font-size: 12px;
+      font-size: 14px;
       color: #EEE;
       font-weight: 400;
-      margin-top: 10px;
+      margin-top: 5px;
+      text-shadow: 0 0 3px #000;
     }
 
     .cards {
