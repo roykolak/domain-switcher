@@ -1,4 +1,31 @@
+var tracker = new Tracker("9ee5f5d9bb3dad93f990c534b4e9efec");
+
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+
+chrome.storage.sync.get('userId', function(data) {
+  var userId;
+
+  if(data && data.userId) {
+    userId = data.userId;
+  } else {
+    userId = guid();
+    chrome.storage.sync.set({userId: userId});
+  }
+
+  tracker.identify(userId, {
+    isNew: typeof(data.userId) === 'undefined'
+  });
+});
+
+
 chrome.runtime.onInstalled.addListener(function() {
+  tracker.installed();
+
   chrome.manifest = chrome.app.getDetails();
 
   chrome.storage.local.set({
@@ -49,7 +76,7 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
             }));
           }
         };
-
+        mixpanel.track('render');
         xhr.send();
       };
 
@@ -163,6 +190,8 @@ chrome.tabs.onHighlighted.addListener(function(highlightInfo) {
 });
 
 chrome.browserAction.onClicked.addListener(function() {
+  tracker.browserAction();
+  
   chrome.tabs.query({active: true}, function(tabs) {
     if(tabs[0]) {
       chrome.tabs.sendMessage(tabs[0].id, {toggleDisplay: true}, function(response) {});
