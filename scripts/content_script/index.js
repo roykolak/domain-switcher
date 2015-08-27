@@ -38,6 +38,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if(request.toggleDisplay) {
     if(root.querySelector('.wrapper.show')) {
       root.querySelector('.wrapper').classList.remove('show');
+      setTimeout(function() {
+        root.querySelector('.wrapper').remove();
+      }, 500);
     } else {
       chrome.extension.sendRequest({cmd: 'read_index'}, function(html) {
         var div = document.createElement('div');
