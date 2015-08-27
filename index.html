@@ -93,14 +93,14 @@
       text-align: center;
     }
     .selected-tab .title {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 400;
       color: #FFF;
       text-shadow: 0 0 6px #000;
       margin-bottom: 0;
     }
     .selected-tab .url {
-      font-size: 14px;
+      font-size: 12px;
       color: #EEE;
       font-weight: 400;
       margin-top: 5px;
@@ -108,9 +108,11 @@
     }
 
     .cards {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      text-align: center;
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 10px;
+      padding: 20px 30px;
     }
 
     .cards .card {
@@ -141,8 +143,11 @@
     }
     a:focus {
       outline: 0;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.3);
       border-radius: 6px;
+    }
+    a:focus .screenshot {
+      box-shadow: 0 0 5px #FFF;
     }
 
     .wrapper.show {
@@ -154,6 +159,7 @@
       left: 0;
       right: 0;
       min-height: 250px;
+      text-align: center;
     }
     .top-bar {
       position: absolute;
@@ -163,7 +169,7 @@
       padding: 10px;
       font-family: 'Helvetica Neue', 'Lucida Grande', sans-serif;
       color: #DDD;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.2);
     }
     .extension {
       font-size: 13px;
