@@ -8,6 +8,10 @@
         {{#each items}}
           <a href="{{url}}" class="tab" data-title="{{title}}" data-url="{{url}}" data-tab-id="{{id}}" tabindex="0">
             <div class="card">
+              {{#current}}
+                <div class="current"></div>
+              {{/current}}
+              
               <div class="screenshot"></div>
               <div class="title">{{title}}</div>
             </div>

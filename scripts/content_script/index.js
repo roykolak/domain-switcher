@@ -4,7 +4,12 @@ bodyEl.insertBefore(containerEl, bodyEl.firstChild);
 var root = containerEl.createShadowRoot();
 
 var loadContent = function(container, callback) {
-  var data = {cmd: 'read_template', hostname: window.location.hostname};
+  var data = {
+    cmd: 'read_template',
+    hostname: window.location.hostname,
+    href: window.location.href
+  };
+  
   chrome.extension.sendRequest(data, function(html) {
     var content = document.createElement('div');
     content.innerHTML = html;

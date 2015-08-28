@@ -112,7 +112,7 @@
       display: inline-block;
       background: linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.6));
       border-radius: 10px;
-      padding: 20px 30px;
+      padding: 15 inherit;px 30px;
     }
 
     .cards .card {
@@ -177,13 +177,24 @@
     .review {
       float: right;
       margin: 0;
+      font-size: 12px;
+    }
+    .current {
+      transform: rotate(48deg);
+      background: #e5c100;
+      box-shadow: 0 0 5px #555;
+      width: 50px;
+      height: 79px;
+      position: absolute;
+      left: -13px;
+      top: -33px;
     }
   </style>
   <div class="wrapper">
     <div class="shade"></div>
     <header class="top-bar">
       <p class="review">
-        <a href="#">Leave a review?</a>
+        <a href="#"><i>Protip:</i> {{shortcut}}</a>
       </p>
       <div class="extension">Site Switcher</div>
     </header>

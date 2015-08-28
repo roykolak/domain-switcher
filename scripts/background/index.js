@@ -44,15 +44,29 @@ chrome.runtime.onInstalled.addListener(function() {
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
   switch(request.cmd) {
     case "read_index":
-      chromeAPI.requestFile("index.html", function(status, response) {
-        if (status == 200) {
-          sendResponse(response);
-        }
+      chrome.commands.getAll(function(commands) {
+        var toggleCommand = commands.find(function(command) {
+          return command.name == "toggle"
+        });
+
+        chromeAPI.requestFile("index.html", function(status, response) {
+          if (status == 200) {
+            var template = Handlebars.compile(response);
+            sendResponse(template({
+              shortcut: toggleCommand.shortcut
+            }));
+          }
+        });
       });
       break;
 
     case "read_template":
       chromeAPI.getTabsForDomain(request.hostname, function(filteredTabs) {
+        var index = filteredTabs.findIndex(function(tab) {
+          return tab.url == request.href
+        });
+        filteredTabs[index].current = true;
+
         chromeAPI.requestFile("template.html", function(status, response) {
           if (status == 200) {
             var template = Handlebars.compile(response);
