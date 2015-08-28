@@ -53,7 +53,8 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
           if (status == 200) {
             var template = Handlebars.compile(response);
             sendResponse(template({
-              shortcut: toggleCommand.shortcut
+              shortcut: toggleCommand.shortcut,
+              hostname: request.hostname
             }));
           }
         });
@@ -152,6 +153,30 @@ chrome.tabs.onHighlighted.addListener(function(highlightInfo) {
     }
 
     chrome.browserAction.setBadgeText({text: badgeText});
+  });
+
+  chrome.tabs.get(tabId, function(tab) {
+    chrome.storage.local.get('tabMap', function(data) {
+      if(data.tabMap[tabId]) {
+        chrome.storage.local.remove(tabId + ':' + data.tabMap[tabId].url);
+      }
+
+      data.tabMap[tabId] = {url: tab.url};
+      chrome.storage.local.set(data);
+
+      var tabData = {},
+          key = tabId + ':' + tab.url;
+
+      if(!tab.url.includes('chrome://')) {
+        chrome.tabs.captureVisibleTab(null, {}, function(image) {
+          tabData[key] = {screenshot: image};
+          chrome.storage.local.set(tabData);
+        });
+      } else {
+        tabData[key] = {screenshot: null};
+        chrome.storage.local.set(tabData);
+      }
+    });
   });
 });
 

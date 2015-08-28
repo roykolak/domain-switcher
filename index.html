@@ -71,9 +71,9 @@
       position: relative;
       overflow: hidden;
     }
-    .wrapper.screenshot-missing .missing-screen-explanation {
+    /*.wrapper.screenshot-missing .missing-screen-explanation {
       display: block;
-    }
+    }*/
     .inner-content {
       top: 0;
       position: relative;
@@ -101,9 +101,9 @@
     .cards {
       text-align: center;
       display: inline-block;
-      background: linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.6));
+      background: linear-gradient(rgba(248,248,248, 0.6), rgba(248,248,248, 0.7));
       border-radius: 10px;
-      padding: 15px 30px;
+      padding: 15px 25px;
     }
 
     .cards .card {
@@ -155,6 +155,7 @@
     .top-bar {
       position: absolute;
       display: flex;
+      overflow: hidden;
       top: 0px;
       left: 0px;
       right: 0px;
@@ -165,9 +166,12 @@
     }
     .extension {
       flex-grow: 1;
-      font-size: 13px;
+      font-size: 52px;
+      opacity: 0.1;
       text-align: left;
-      opacity: 0.7;
+      text-transform: uppercase;
+      font-style: italic;
+      font-weight: bold;
     }
     .review {
       flex-grow: 1;
@@ -176,11 +180,13 @@
       font-size: 12px;
       text-align: right;
       opacity: 0.7;
+      text-shadow: 1px 1px 0px #000;
     }
     .missing-screen-explanation {
       flex-grow: 1;
       margin: 0;
       text-align: center;
+      display: none;
     }
     .missing-screen-explanation a {
       color: #FFF;
@@ -201,13 +207,11 @@
   <div class="wrapper">
     <div class="shade"></div>
     <header class="top-bar">
-      <div class="extension">Site Switcher</div>
+      <div class="extension">QuickSwitch</div>
       <p class="missing-screen-explanation">
         <a href="https://github.com/roykolak/domain-switcher/wiki/Why-are-there-missing-screenshots%3F" target="_blank">Why are there missing screenshots?</a>
       </p>
-      <p class="review">
-        <a href="#"><i>Protip:</i> {{shortcut}}</a>
-      </p>
+      <p class="review"><i>Protip:</i> {{shortcut}}</p>
     </header>
   </div>
 </template>

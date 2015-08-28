@@ -47,7 +47,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         root.querySelector('.wrapper').remove();
       }, 500);
     } else {
-      chrome.extension.sendRequest({cmd: 'read_index'}, function(html) {
+      chrome.extension.sendRequest({cmd: 'read_index', hostname: window.location.hostname}, function(html) {
         var div = document.createElement('div');
         div.innerHTML = html;
         bodyEl.insertBefore(div, bodyEl.firstChild);
