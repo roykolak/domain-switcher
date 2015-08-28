@@ -65,22 +65,13 @@
       height: 100%;
       flex-flow: row wrap;
     }
-    .missing-screenshot-cta {
-      display: none;
-      text-align: center;
-    }
-    .missing-screenshot-cta a {
-      color: #FFF;
-      font-size: 13px;
-      text-decoration: underline;
-    }
     .content {
       z-index: 100;
       width: 90%;
       position: relative;
       overflow: hidden;
     }
-    .content.missing-screenshot .missing-screenshot-cta {
+    .wrapper.screenshot-missing .missing-screen-explanation {
       display: block;
     }
     .inner-content {
@@ -163,6 +154,7 @@
     }
     .top-bar {
       position: absolute;
+      display: flex;
       top: 0px;
       left: 0px;
       right: 0px;
@@ -172,12 +164,28 @@
       background: rgba(0, 0, 0, 0.2);
     }
     .extension {
+      flex-grow: 1;
       font-size: 13px;
+      text-align: left;
+      opacity: 0.7;
     }
     .review {
+      flex-grow: 1;
       float: right;
       margin: 0;
       font-size: 12px;
+      text-align: right;
+      opacity: 0.7;
+    }
+    .missing-screen-explanation {
+      flex-grow: 1;
+      margin: 0;
+      text-align: center;
+    }
+    .missing-screen-explanation a {
+      color: #FFF;
+      font-size: 13px;
+      text-decoration: underline;
     }
     .current {
       transform: rotate(48deg);
@@ -193,10 +201,13 @@
   <div class="wrapper">
     <div class="shade"></div>
     <header class="top-bar">
+      <div class="extension">Site Switcher</div>
+      <p class="missing-screen-explanation">
+        <a href="https://github.com/roykolak/domain-switcher/wiki/Why-are-there-missing-screenshots%3F" target="_blank">Why are there missing screenshots?</a>
+      </p>
       <p class="review">
         <a href="#"><i>Protip:</i> {{shortcut}}</a>
       </p>
-      <div class="extension">Site Switcher</div>
     </header>
   </div>
 </template>

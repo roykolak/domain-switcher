@@ -9,7 +9,7 @@ var loadContent = function(container, callback) {
     hostname: window.location.hostname,
     href: window.location.href
   };
-  
+
   chrome.extension.sendRequest(data, function(html) {
     var content = document.createElement('div');
     content.innerHTML = html;
@@ -34,7 +34,7 @@ var loadImage = function(el) {
       var random = Math.ceil(Math.random() * (7 - 0) + 0);
       titleEl.classList.add('none');
       titleEl.classList.add('none-' + random);
-      root.querySelector('.content').classList.add('missing-screenshot')
+      root.querySelector('.wrapper').classList.add('screenshot-missing')
     }
   });
 }
