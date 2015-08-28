@@ -1,8 +1,8 @@
 {
-  "name": "Site Switcher",
+  "name": "Quick Switch",
   "version": "0.1.1",
   "manifest_version": 2,
-  "description": "inline site history",
+  "description": "Switch between tabs of the same site, fast!",
   "minimum_chrome_version": "34",
   "icons": {
     "128": "icons/icon128.png"
