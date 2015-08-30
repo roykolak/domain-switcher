@@ -113,27 +113,7 @@ chrome.commands.onCommand.addListener(function(command) {
 
 chrome.tabs.onUpdated.addListener(function(id, changeInfo, tab) {
   if(changeInfo.status === 'complete') {
-    chrome.storage.local.get('tabMap', function(data) {
-      if(data.tabMap[id]) {
-        chrome.storage.local.remove(id + ':' + data.tabMap[id].url);
-      }
-
-      data.tabMap[id] = {url: tab.url, lastFocusedAt: new Date().toISOString()};
-      chrome.storage.local.set(data);
-
-      var tabData = {},
-          key = id + ':' + tab.url;
-
-      if(!tab.url.includes('chrome://')) {
-        chrome.tabs.captureVisibleTab(null, {}, function(image) {
-          tabData[key] = {screenshot: image};
-          chrome.storage.local.set(tabData);
-        });
-      } else {
-        tabData[key] = {screenshot: null};
-        chrome.storage.local.set(tabData);
-      }
-    });
+    chromeAPI.rememberTab(id);
   }
 });
 
@@ -150,6 +130,12 @@ chrome.tabs.onRemoved.addListener(function(tabId) {
 
 
 chrome.tabs.onHighlighted.addListener(function(highlightInfo) {
+  chromeAPI.getPreviouslyHighlightedTab(function(tabId) {
+    if(tabId) {
+      chrome.tabs.sendMessage(tabId, {hideExtension: true}, function(response) {});
+    }
+  });
+
   var tabId = highlightInfo.tabIds[0];
   chromeAPI.getSimilarTabsForTab(tabId, function(tabs) {
     var badgeText = '';
@@ -161,29 +147,7 @@ chrome.tabs.onHighlighted.addListener(function(highlightInfo) {
     chrome.browserAction.setBadgeText({text: badgeText});
   });
 
-  chrome.tabs.get(tabId, function(tab) {
-    chrome.storage.local.get('tabMap', function(data) {
-      if(data.tabMap[tabId]) {
-        chrome.storage.local.remove(tabId + ':' + data.tabMap[tabId].url);
-      }
-
-      data.tabMap[tabId] = {url: tab.url, lastFocusedAt: new Date().toISOString()};
-      chrome.storage.local.set(data);
-
-      var tabData = {},
-          key = tabId + ':' + tab.url;
-
-      if(!tab.url.includes('chrome://')) {
-        chrome.tabs.captureVisibleTab(null, {}, function(image) {
-          tabData[key] = {screenshot: image};
-          chrome.storage.local.set(tabData);
-        });
-      } else {
-        tabData[key] = {screenshot: null};
-        chrome.storage.local.set(tabData);
-      }
-    });
-  });
+  chromeAPI.rememberTab(tabId);
 });
 
 chrome.browserAction.onClicked.addListener(function() {

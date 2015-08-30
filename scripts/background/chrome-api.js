@@ -82,6 +82,32 @@ var ChromeAPI;
         callback(this.status, this.response);
       };
       xhr.send();
+    },
+
+    rememberTab: function(tabId) {
+      chrome.tabs.get(tabId, function(tab) {
+        chrome.storage.local.get('tabMap', function(data) {
+          if(data.tabMap[tabId]) {
+            chrome.storage.local.remove(tabId + ':' + data.tabMap[tabId].url);
+          }
+
+          data.tabMap[tabId] = {url: tab.url, lastFocusedAt: new Date().toISOString()};
+          chrome.storage.local.set(data);
+
+          var tabData = {},
+              key = tabId + ':' + tab.url;
+
+          if(!tab.url.includes('chrome://')) {
+            chrome.tabs.captureVisibleTab(null, {}, function(image) {
+              tabData[key] = {screenshot: image};
+              chrome.storage.local.set(tabData);
+            });
+          } else {
+            tabData[key] = {screenshot: null};
+            chrome.storage.local.set(tabData);
+          }
+        });
+      });
     }
   };
 })();
