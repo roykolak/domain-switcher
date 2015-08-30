@@ -23,6 +23,14 @@ var loadContent = function(container, callback) {
   });
 }
 
+var hideExtension = function() {
+  extensionOpen = false;
+  root.querySelector('.wrapper').classList.remove('show');
+  setTimeout(function() {
+    root.querySelector('.wrapper').remove();
+  }, 500);
+}
+
 var loadImage = function(el) {
   var data = el.dataset;
   data.cmd = 'read_screenshot';
@@ -42,11 +50,9 @@ var loadImage = function(el) {
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if(request.toggleDisplay) {
     if(root.querySelector('.wrapper.show')) {
-      root.querySelector('.wrapper').classList.remove('show');
-      setTimeout(function() {
-        root.querySelector('.wrapper').remove();
-      }, 500);
+      hideExtension();
     } else {
+      extensionOpen = true;
       chrome.extension.sendRequest({cmd: 'read_index', hostname: window.location.hostname}, function(html) {
         var div = document.createElement('div');
         div.innerHTML = html;
@@ -96,6 +102,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             root.querySelector('a.dummy').addEventListener('focus', function(e) {
               links[0].focus();
             }, true);
+
+            document.addEventListener('keyup', function(e) {
+              if (extensionOpen && e.keyCode == 27) {
+                hideExtension();
+              }
+            });
           });
         }, 100);
       });
