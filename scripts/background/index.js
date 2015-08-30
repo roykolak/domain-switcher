@@ -45,7 +45,7 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
   switch(request.cmd) {
     case "read_index":
       chrome.commands.getAll(function(commands) {
-        var toggleCommand = commands.find(function(command) {
+        var toggleCommand = chrome.commands.find(function(command) {
           return command.name == "toggle"
         });
 
