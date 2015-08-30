@@ -87,7 +87,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
               });
             });
 
-            links[0].focus();
+            if(links[1]) {
+              links[1].focus();
+            } else {
+              links[0].focus();
+            }
 
             root.querySelector('a.dummy').addEventListener('focus', function(e) {
               links[0].focus();

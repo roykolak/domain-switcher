@@ -72,18 +72,20 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         });
         filteredTabs[index].current = true;
 
-        chromeAPI.requestFile("template.html", function(status, response) {
-          if (status == 200) {
-            var template = Handlebars.compile(response);
-            sendResponse(template({
-              root: 'chrome-extension://' + chrome.runtime.id,
-              items: filteredTabs
-            }));
-          }
-        });
+        chromeAPI.orderTabsByLastFocus(filteredTabs, function(orderedFilteredTabs) {
+          chromeAPI.requestFile("template.html", function(status, response) {
+            if (status == 200) {
+              var template = Handlebars.compile(response);
+              sendResponse(template({
+                root: 'chrome-extension://' + chrome.runtime.id,
+                items: orderedFilteredTabs
+              }));
+            }
+          });
 
-        tracker.showPages({
-          numberOfPages: filteredTabs.length
+          tracker.showPages({
+            numberOfPages: filteredTabs.length
+          });
         });
       });
       break;
@@ -116,7 +118,7 @@ chrome.tabs.onUpdated.addListener(function(id, changeInfo, tab) {
         chrome.storage.local.remove(id + ':' + data.tabMap[id].url);
       }
 
-      data.tabMap[id] = {url: tab.url};
+      data.tabMap[id] = {url: tab.url, lastFocusedAt: new Date().toISOString()};
       chrome.storage.local.set(data);
 
       var tabData = {},
@@ -165,7 +167,7 @@ chrome.tabs.onHighlighted.addListener(function(highlightInfo) {
         chrome.storage.local.remove(tabId + ':' + data.tabMap[tabId].url);
       }
 
-      data.tabMap[tabId] = {url: tab.url};
+      data.tabMap[tabId] = {url: tab.url, lastFocusedAt: new Date().toISOString()};
       chrome.storage.local.set(data);
 
       var tabData = {},

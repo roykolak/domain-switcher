@@ -27,6 +27,30 @@ var ChromeAPI;
       });
     },
 
+    orderTabsByLastFocus: function(tabs, callback) {
+      var out = tabs;
+      chrome.storage.local.get('tabMap', function(data) {
+        tabs.forEach(function(tab, i) {
+          var tabData = data.tabMap[tab.id];
+          if(tabData) {
+            out[i].lastFocusedAt = new Date(tabData.lastFocusedAt);
+          } else {
+            out[i].lastFocusedAt = new Date(new Date().getTime() - (60 * 60));
+          }
+        });
+
+        out.sort(function(a,b) {
+          if (a.lastFocusedAt.getTime() > b.lastFocusedAt.getTime())
+            return -1;
+          if (a.lastFocusedAt.getTime() < b.lastFocusedAt.getTime())
+            return 1;
+          return 0;
+        });
+
+        callback(out);
+      });
+    },
+
     getSimilarTabsForTab: function(tabId, callback) {
       chrome.tabs.get(tabId, function(tab) {
         var hostname = tab.url.match(/\w+:\/\/(.*?)\//)[0];
