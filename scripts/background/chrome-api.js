@@ -35,7 +35,7 @@ var ChromeAPI;
           if(tabData) {
             out[i].lastFocusedAt = new Date(tabData.lastFocusedAt);
           } else {
-            out[i].lastFocusedAt = new Date(new Date().getTime() - (60 * 60));
+            out[i].lastFocusedAt = new Date(new Date().getTime() - (1000 * 60 * 60));
           }
         });
 
