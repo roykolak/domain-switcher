@@ -103,6 +103,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
               links[0].focus();
             }, true);
 
+            root.querySelector('.shade').addEventListener('click', function(e) {
+              if(extensionOpen) {
+                hideExtension();
+              }
+            });
+
             document.addEventListener('keyup', function(e) {
               if (extensionOpen && e.keyCode == 27) {
                 hideExtension();
