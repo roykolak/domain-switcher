@@ -84,6 +84,15 @@ var ChromeAPI;
       xhr.send();
     },
 
+    updateTabLastFocusedAt: function(tabId) {
+      chrome.storage.local.get('tabMap', function(data) {
+        if(data.tabMap[tabId]) {
+          data.tabMap[tabId].lastFocusedAt = new Date().toISOString();
+          chrome.storage.local.set(data);
+        }
+      });
+    },
+
     rememberTab: function(tabId, options) {
       var updateScreenshot = function(tab, tabMap) {
         if(tabMap[tabId]) {

@@ -134,6 +134,7 @@ chrome.tabs.onRemoved.addListener(function(tabId) {
 
 chrome.tabs.onHighlighted.addListener(function(highlightInfo) {
   var tabId = highlightInfo.tabIds[0];
+
   chromeAPI.getSimilarTabsForTab(tabId, function(tabs) {
     var badgeText = '';
 
@@ -144,9 +145,11 @@ chrome.tabs.onHighlighted.addListener(function(highlightInfo) {
     chrome.browserAction.setBadgeText({text: badgeText});
   });
 
+  chromeAPI.updateTabLastFocusedAt(tabId);
+
   // Rely on the screenshot override logic on rememberTab, don't force it to
   // store a fresh screenshot because if the user has QuickSwitch open on a
-  // newly highlighted tab, then we don't want to take a screenshot. 
+  // newly highlighted tab, then we don't want to take a screenshot.
   chromeAPI.rememberTab(tabId);
 });
 
