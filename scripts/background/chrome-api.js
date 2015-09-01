@@ -84,27 +84,45 @@ var ChromeAPI;
       xhr.send();
     },
 
-    rememberTab: function(tabId) {
+    rememberTab: function(tabId, options) {
+      var updateScreenshot = function(tab, tabMap) {
+        if(tabMap[tabId]) {
+          chrome.storage.local.remove(tabId + ':' + tabMap[tabId].url);
+        }
+
+        tabMap[tabId] = {url: tab.url, lastFocusedAt: new Date().toISOString()};
+        chrome.storage.local.set({tabMap: tabMap});
+
+        var tabData = {},
+            key = tabId + ':' + tab.url;
+
+        if(!tab.url.includes('chrome://')) {
+          chrome.tabs.captureVisibleTab(null, {}, function(image) {
+            tabData[key] = {screenshot: image};
+            chrome.storage.local.set(tabData);
+          });
+        } else {
+          tabData[key] = {screenshot: null};
+          chrome.storage.local.set(tabData);
+        }
+      };
+
       chrome.tabs.get(tabId, function(tab) {
         chrome.storage.local.get('tabMap', function(data) {
-          if(data.tabMap[tabId]) {
-            chrome.storage.local.remove(tabId + ':' + data.tabMap[tabId].url);
-          }
-
-          data.tabMap[tabId] = {url: tab.url, lastFocusedAt: new Date().toISOString()};
-          chrome.storage.local.set(data);
-
-          var tabData = {},
-              key = tabId + ':' + tab.url;
-
-          if(!tab.url.includes('chrome://')) {
-            chrome.tabs.captureVisibleTab(null, {}, function(image) {
-              tabData[key] = {screenshot: image};
-              chrome.storage.local.set(tabData);
-            });
+          if(options && options.override) {
+            updateScreenshot(tab, data.tabMap);
           } else {
-            tabData[key] = {screenshot: null};
-            chrome.storage.local.set(tabData);
+            var key = tabId + ':' + tab.url;
+            chrome.storage.local.get(key, function(screenshotData) {
+              if(screenshotData[key]) {
+                // Nothing because we found a screenshot for this specific tab
+                // on this specific site.
+              } else {
+                // Take a screenshot because this combination of tab id and url
+                // does not currently exist in storage.
+                updateScreenshot(tab, data.tabMap);
+              }
+            })
           }
         });
       });

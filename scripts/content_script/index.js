@@ -25,6 +25,7 @@ var loadContent = function(container, callback) {
 
 var hideExtension = function() {
   extensionOpen = false;
+  root.querySelector('.wrapper').classList.remove('immediate');
   root.querySelector('.wrapper').classList.remove('show');
   setTimeout(function() {
     root.querySelector('.wrapper').remove();
@@ -48,7 +49,11 @@ var loadImage = function(el) {
 }
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  if(request.toggleDisplay) {
+  if(request.hide) {
+    if(root.querySelector('.wrapper.show')) {
+      hideExtension();
+    }
+  } else if(request.toggleDisplay) {
     if(root.querySelector('.wrapper.show')) {
       hideExtension();
     } else {
@@ -85,11 +90,22 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
               link.addEventListener("click", function(e) {
                 e.preventDefault();
+
+                root.querySelector('.wrapper').classList.add('immediate');
                 root.querySelector('.wrapper').classList.remove('show');
-                chrome.extension.sendRequest({
-                  cmd: 'highlight_tab',
-                  tabId: parseInt(e.currentTarget.dataset.tabId, 10)
-                });
+
+                var tabId = parseInt(e.currentTarget.dataset.tabId, 10)
+
+                // Need a slight delay because it seems js is halted on
+                // background tabs, so we need to make sure QuickSwitch has been
+                // closed before switching to the requested tab.
+                setTimeout(function() {
+                  chrome.extension.sendRequest({
+                    cmd: 'highlight_tab',
+                    tabId: tabId
+                  });
+                }, 10);
+                
               });
             });
 

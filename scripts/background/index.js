@@ -113,7 +113,10 @@ chrome.commands.onCommand.addListener(function(command) {
 
 chrome.tabs.onUpdated.addListener(function(id, changeInfo, tab) {
   if(changeInfo.status === 'complete') {
-    chromeAPI.rememberTab(id);
+
+    // We always want to override the screen of the tab when the tab is updated
+    // because the update event means that the content is probably different
+    chromeAPI.rememberTab(id, {override: true});
   }
 });
 
@@ -130,12 +133,6 @@ chrome.tabs.onRemoved.addListener(function(tabId) {
 
 
 chrome.tabs.onHighlighted.addListener(function(highlightInfo) {
-  chromeAPI.getPreviouslyHighlightedTab(function(tabId) {
-    if(tabId) {
-      chrome.tabs.sendMessage(tabId, {hideExtension: true}, function(response) {});
-    }
-  });
-
   var tabId = highlightInfo.tabIds[0];
   chromeAPI.getSimilarTabsForTab(tabId, function(tabs) {
     var badgeText = '';
@@ -147,6 +144,9 @@ chrome.tabs.onHighlighted.addListener(function(highlightInfo) {
     chrome.browserAction.setBadgeText({text: badgeText});
   });
 
+  // Rely on the screenshot override logic on rememberTab, don't force it to
+  // store a fresh screenshot because if the user has QuickSwitch open on a
+  // newly highlighted tab, then we don't want to take a screenshot. 
   chromeAPI.rememberTab(tabId);
 });
 
