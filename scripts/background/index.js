@@ -67,8 +67,11 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
 
     case "read_template":
       chromeAPI.getTabsForDomain(request.hostname, function(filteredTabs) {
-        var index = filteredTabs.findIndex(function(tab) {
-          return tab.url == request.href && tab.id == sender.tab.id
+        var index;
+        filteredTabs.forEach(function(tab, i) {
+           if(tab.url == request.href && tab.id == sender.tab.id) {
+             index = i;
+           }
         });
         filteredTabs[index].current = true;
 
