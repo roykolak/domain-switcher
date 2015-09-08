@@ -125,6 +125,7 @@ chrome.tabs.onUpdated.addListener(function(id, changeInfo, tab) {
     // We always want to override the screen of the tab when the tab is updated
     // because the update event means that the content is probably different
     chromeAPI.rememberTab(id, {override: true});
+    chromeAPI.updateBrowserActionIcon({activate: false});
   }
 });
 
