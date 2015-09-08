@@ -1,6 +1,6 @@
 {
   "name": "Quick Switch",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "manifest_version": 2,
   "description": "Switch between tabs of the same site, fast!",
   "minimum_chrome_version": "34",
