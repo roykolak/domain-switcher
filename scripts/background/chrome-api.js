@@ -75,6 +75,43 @@ var ChromeAPI;
       });
     },
 
+    updateBrowserActionIcon: function(options) {
+      chrome.tabs.query({active: true}, function(tabs) {
+        if(tabs[0]) {
+          var tabId = tabs[0].id;
+          
+          chromeAPI.getSimilarTabsForTab(tabId, function(tabs) {
+            var similarTabsCount;
+
+            if(tabs.length > 1) {
+              similarTabsCount = tabs.length.toString();
+            } else {
+              similarTabsCount = 1;
+            }
+
+            if(similarTabsCount > 9) {
+              similarTabsCount = 10;
+            }
+
+            if(typeof(similarTabsCount) !== 'undefined') {
+              var path = 'icons/icon38-' + similarTabsCount;
+
+              if(options.activate) {
+                path = path + '-active'
+              }
+
+              path = path + '.png';
+
+              chrome.browserAction.setIcon({
+                path: path,
+                tabId: tabId
+              });
+            }
+          });
+        }
+      });
+    },
+
     requestFile: function(file, callback) {
       var xhr = new XMLHttpRequest();
       xhr.open('GET', chrome.extension.getURL(file), true);

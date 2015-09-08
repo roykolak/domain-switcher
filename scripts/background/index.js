@@ -111,6 +111,7 @@ chrome.commands.onCommand.addListener(function(command) {
   if(command == 'toggle') {
     tracker.open({method: 'Keyboard shortcut'});
     chromeAPI.sendMessageToActiveTab({toggleDisplay: true});
+    chromeAPI.updateBrowserActionIcon({activate: true});
   }
 });
 
@@ -138,15 +139,7 @@ chrome.tabs.onRemoved.addListener(function(tabId) {
 chrome.tabs.onHighlighted.addListener(function(highlightInfo) {
   var tabId = highlightInfo.tabIds[0];
 
-  chromeAPI.getSimilarTabsForTab(tabId, function(tabs) {
-    var badgeText = '';
-
-    if(tabs.length > 1) {
-      badgeText = tabs.length.toString()
-    }
-
-    chrome.browserAction.setBadgeText({text: badgeText});
-  });
+  chromeAPI.updateBrowserActionIcon({activate: false});
 
   chromeAPI.updateTabLastFocusedAt(tabId);
 
@@ -159,4 +152,5 @@ chrome.tabs.onHighlighted.addListener(function(highlightInfo) {
 chrome.browserAction.onClicked.addListener(function() {
   tracker.open({method: 'Browser action'});
   chromeAPI.sendMessageToActiveTab({toggleDisplay: true});
+  chromeAPI.updateBrowserActionIcon({activate: true});
 });
