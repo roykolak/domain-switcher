@@ -104,13 +104,17 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
       chromeAPI.highlightTab(request.tabId);
       tracker.selectPage();
       break;
+
+    case "hide_extension":
+      chromeAPI.updateBrowserActionIcon({activate: false});
+      break;
     }
 });
 
 chrome.commands.onCommand.addListener(function(command) {
   if(command == 'toggle') {
     tracker.open({method: 'Keyboard shortcut'});
-    chromeAPI.sendMessageToActiveTab({toggleDisplay: true});
+    chromeAPI.sendMessageToActiveTab({toggle: true});
     chromeAPI.updateBrowserActionIcon({activate: true});
   }
 });
@@ -151,6 +155,6 @@ chrome.tabs.onHighlighted.addListener(function(highlightInfo) {
 
 chrome.browserAction.onClicked.addListener(function() {
   tracker.open({method: 'Browser action'});
-  chromeAPI.sendMessageToActiveTab({toggleDisplay: true});
+  chromeAPI.sendMessageToActiveTab({show: true});
   chromeAPI.updateBrowserActionIcon({activate: true});
 });

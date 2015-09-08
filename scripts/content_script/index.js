@@ -23,13 +23,19 @@ var loadContent = function(container, callback) {
   });
 }
 
-var hideExtension = function() {
+var hideExtension = function(options) {
   extensionOpen = false;
   root.querySelector('.wrapper').classList.remove('immediate');
   root.querySelector('.wrapper').classList.remove('show');
   setTimeout(function() {
     root.querySelector('.wrapper').remove();
   }, 500);
+
+  if(options && options.informBackground) {
+    chrome.extension.sendRequest({
+      cmd: 'hide_extension'
+    });
+  }
 }
 
 var loadImage = function(el) {
@@ -48,91 +54,100 @@ var loadImage = function(el) {
   });
 }
 
+var showExtension = function() {
+  extensionOpen = true;
+  chrome.extension.sendRequest({cmd: 'read_index', hostname: window.location.hostname}, function(html) {
+    var div = document.createElement('div');
+    div.innerHTML = html;
+    bodyEl.insertBefore(div, bodyEl.firstChild);
+
+    var template = document.querySelector('#site-history');
+    var clone = document.importNode(template.content, true);
+
+    root.appendChild(clone);
+
+    setTimeout(function() {
+      root.querySelector('.wrapper').classList.add('show');
+
+      loadContent(root.querySelector('.wrapper'), function() {
+        var items = root.querySelectorAll('[data-url]');
+        [].forEach.call(items, function(item) {
+          loadImage(item);
+        });
+
+        var selectedTitleEl = root.querySelector('.selected-tab .title'),
+            selectedUrlEl = root.querySelector('.selected-tab .url');
+
+        var links = root.querySelectorAll('a.tab');
+        [].forEach.call(links, function(link) {
+          link.addEventListener("focus", function(e) {
+            var dataset = e.currentTarget.dataset;
+            selectedTitleEl.innerHTML = dataset.title;
+            selectedUrlEl.innerHTML = dataset.url;
+          });
+
+          link.addEventListener("click", function(e) {
+            e.preventDefault();
+
+            root.querySelector('.wrapper').classList.add('immediate');
+            root.querySelector('.wrapper').classList.remove('show');
+
+            var tabId = parseInt(e.currentTarget.dataset.tabId, 10)
+
+            // Need a slight delay because it seems js is halted on
+            // background tabs, so we need to make sure QuickSwitch has been
+            // closed before switching to the requested tab.
+            setTimeout(function() {
+              chrome.extension.sendRequest({
+                cmd: 'highlight_tab',
+                tabId: tabId
+              });
+            }, 10);
+
+          });
+        });
+
+        if(links[1]) {
+          links[1].focus();
+        } else {
+          links[0].focus();
+        }
+
+        root.querySelector('a.dummy').addEventListener('focus', function(e) {
+          links[0].focus();
+        }, true);
+
+        root.querySelector('.shade').addEventListener('click', function(e) {
+          if(extensionOpen) {
+            hideExtension({informBackground: true});
+          }
+        });
+
+        document.addEventListener('keyup', function(e) {
+          if (extensionOpen && e.keyCode == 27) {
+            hideExtension({informBackground: true});
+          }
+        });
+      });
+    }, 100);
+  });
+};
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if(request.hide) {
     if(root.querySelector('.wrapper.show')) {
       hideExtension();
     }
-  } else if(request.toggleDisplay) {
+
+  } else if(request.show) {
+    showExtension();
+
+  } else if(request.toggle) {
+
     if(root.querySelector('.wrapper.show')) {
-      hideExtension();
+      hideExtension({informBackground: true});
     } else {
-      extensionOpen = true;
-      chrome.extension.sendRequest({cmd: 'read_index', hostname: window.location.hostname}, function(html) {
-        var div = document.createElement('div');
-        div.innerHTML = html;
-        bodyEl.insertBefore(div, bodyEl.firstChild);
-
-        var template = document.querySelector('#site-history');
-        var clone = document.importNode(template.content, true);
-
-        root.appendChild(clone);
-
-        setTimeout(function() {
-          root.querySelector('.wrapper').classList.add('show');
-
-          loadContent(root.querySelector('.wrapper'), function() {
-            var items = root.querySelectorAll('[data-url]');
-            [].forEach.call(items, function(item) {
-              loadImage(item);
-            });
-
-            var selectedTitleEl = root.querySelector('.selected-tab .title'),
-                selectedUrlEl = root.querySelector('.selected-tab .url');
-
-            var links = root.querySelectorAll('a.tab');
-            [].forEach.call(links, function(link) {
-              link.addEventListener("focus", function(e) {
-                var dataset = e.currentTarget.dataset;
-                selectedTitleEl.innerHTML = dataset.title;
-                selectedUrlEl.innerHTML = dataset.url;
-              });
-
-              link.addEventListener("click", function(e) {
-                e.preventDefault();
-
-                root.querySelector('.wrapper').classList.add('immediate');
-                root.querySelector('.wrapper').classList.remove('show');
-
-                var tabId = parseInt(e.currentTarget.dataset.tabId, 10)
-
-                // Need a slight delay because it seems js is halted on
-                // background tabs, so we need to make sure QuickSwitch has been
-                // closed before switching to the requested tab.
-                setTimeout(function() {
-                  chrome.extension.sendRequest({
-                    cmd: 'highlight_tab',
-                    tabId: tabId
-                  });
-                }, 10);
-                
-              });
-            });
-
-            if(links[1]) {
-              links[1].focus();
-            } else {
-              links[0].focus();
-            }
-
-            root.querySelector('a.dummy').addEventListener('focus', function(e) {
-              links[0].focus();
-            }, true);
-
-            root.querySelector('.shade').addEventListener('click', function(e) {
-              if(extensionOpen) {
-                hideExtension();
-              }
-            });
-
-            document.addEventListener('keyup', function(e) {
-              if (extensionOpen && e.keyCode == 27) {
-                hideExtension();
-              }
-            });
-          });
-        }, 100);
-      });
+      showExtension();
     }
   }
 });
