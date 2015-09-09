@@ -2,7 +2,7 @@
   "name": "Quick Switch",
   "version": "0.5.0",
   "manifest_version": 2,
-  "description": "Switch between tabs of the same site, fast!",
+  "description": "Switch between tabs on the same domain, fast!",
   "minimum_chrome_version": "34",
   "icons": {
     "128": "icons/icon128.png"
