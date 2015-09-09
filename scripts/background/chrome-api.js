@@ -75,38 +75,40 @@ var ChromeAPI;
       });
     },
 
-    updateBrowserActionIcon: function(options) {
+    updateBrowserActionIcon: function() {
       chrome.tabs.query({active: true}, function(tabs) {
         if(tabs[0]) {
           var tabId = tabs[0].id;
-          
-          chromeAPI.getSimilarTabsForTab(tabId, function(tabs) {
-            var similarTabsCount;
 
-            if(tabs.length > 1) {
-              similarTabsCount = tabs.length.toString();
-            } else {
-              similarTabsCount = 1;
-            }
+          chrome.tabs.sendMessage(tabId, {state: true}, function(response) {
+            chromeAPI.getSimilarTabsForTab(tabId, function(tabs) {
+              var similarTabsCount;
 
-            if(similarTabsCount > 9) {
-              similarTabsCount = 10;
-            }
-
-            if(typeof(similarTabsCount) !== 'undefined') {
-              var path = 'icons/icon38-' + similarTabsCount;
-
-              if(options.activate) {
-                path = path + '-active'
+              if(tabs.length > 1) {
+                similarTabsCount = tabs.length.toString();
+              } else {
+                similarTabsCount = 1;
               }
 
-              path = path + '.png';
+              if(similarTabsCount > 9) {
+                similarTabsCount = 10;
+              }
 
-              chrome.browserAction.setIcon({
-                path: path,
-                tabId: tabId
-              });
-            }
+              if(typeof(similarTabsCount) !== 'undefined') {
+                var path = 'icons/icon38-' + similarTabsCount;
+
+                if(response.isActive) {
+                  path = path + '-active'
+                }
+
+                path = path + '.png';
+
+                chrome.browserAction.setIcon({
+                  path: path,
+                  tabId: tabId
+                });
+              }
+            });
           });
         }
       });

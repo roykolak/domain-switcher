@@ -3,6 +3,8 @@ containerEl = document.createElement("div");
 bodyEl.insertBefore(containerEl, bodyEl.firstChild);
 var root = containerEl.createShadowRoot();
 
+extensionOpen = false;
+
 var loadContent = function(container, callback) {
   var data = {
     cmd: 'read_template',
@@ -149,5 +151,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     } else {
       showExtension();
     }
+
+  } else if(request.state) {
+    sendResponse({isActive: extensionOpen});
   }
 });

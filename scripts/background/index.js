@@ -106,7 +106,7 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
       break;
 
     case "hide_extension":
-      chromeAPI.updateBrowserActionIcon({activate: false});
+      chromeAPI.updateBrowserActionIcon();
       break;
     }
 });
@@ -115,7 +115,7 @@ chrome.commands.onCommand.addListener(function(command) {
   if(command == 'toggle') {
     tracker.open({method: 'Keyboard shortcut'});
     chromeAPI.sendMessageToActiveTab({toggle: true});
-    chromeAPI.updateBrowserActionIcon({activate: true});
+    chromeAPI.updateBrowserActionIcon();
   }
 });
 
@@ -125,7 +125,7 @@ chrome.tabs.onUpdated.addListener(function(id, changeInfo, tab) {
     // We always want to override the screen of the tab when the tab is updated
     // because the update event means that the content is probably different
     chromeAPI.rememberTab(id, {override: true});
-    chromeAPI.updateBrowserActionIcon({activate: false});
+    chromeAPI.updateBrowserActionIcon();
   }
 });
 
@@ -144,7 +144,7 @@ chrome.tabs.onRemoved.addListener(function(tabId) {
 chrome.tabs.onHighlighted.addListener(function(highlightInfo) {
   var tabId = highlightInfo.tabIds[0];
 
-  chromeAPI.updateBrowserActionIcon({activate: false});
+  chromeAPI.updateBrowserActionIcon();
 
   chromeAPI.updateTabLastFocusedAt(tabId);
 
@@ -156,6 +156,6 @@ chrome.tabs.onHighlighted.addListener(function(highlightInfo) {
 
 chrome.browserAction.onClicked.addListener(function() {
   tracker.open({method: 'Browser action'});
-  chromeAPI.sendMessageToActiveTab({show: true});
-  chromeAPI.updateBrowserActionIcon({activate: true});
+  chromeAPI.sendMessageToActiveTab({toggle: true});
+  chromeAPI.updateBrowserActionIcon();
 });
