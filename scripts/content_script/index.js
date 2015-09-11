@@ -48,10 +48,12 @@ var loadImage = function(el) {
     if(image) {
       titleEl.style.backgroundImage = 'url(' + image + ')';
     } else {
-      var random = Math.ceil(Math.random() * (7 - 0) + 0);
-      titleEl.classList.add('none');
-      titleEl.classList.add('none-' + random);
-      root.querySelector('.wrapper').classList.add('screenshot-missing')
+      if(!el.classList.contains('new')) {
+        var random = Math.ceil(Math.random() * (7 - 0) + 0);
+        titleEl.classList.add('none');
+        titleEl.classList.add('none-' + random);
+        root.querySelector('.wrapper').classList.add('screenshot-missing')
+      }
     }
   });
 }
@@ -94,16 +96,25 @@ var showExtension = function() {
             root.querySelector('.wrapper').classList.add('immediate');
             root.querySelector('.wrapper').classList.remove('show');
 
-            var tabId = parseInt(e.currentTarget.dataset.tabId, 10)
+            var element = e.currentTarget,
+                tabId = parseInt(element.dataset.tabId, 10),
+                url = element.dataset.url
 
             // Need a slight delay because it seems js is halted on
             // background tabs, so we need to make sure QuickSwitch has been
             // closed before switching to the requested tab.
             setTimeout(function() {
-              chrome.extension.sendRequest({
-                cmd: 'highlight_tab',
-                tabId: tabId
-              });
+              if(element.classList.contains('new')) {
+                chrome.extension.sendRequest({
+                  cmd: 'new_tab',
+                  url: url
+                });
+              } else {
+                chrome.extension.sendRequest({
+                  cmd: 'highlight_tab',
+                  tabId: tabId
+                });
+              }
             }, 10);
 
           });

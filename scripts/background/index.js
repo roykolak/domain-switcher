@@ -58,7 +58,8 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
             var template = Handlebars.compile(response);
             sendResponse(template({
               shortcut: toggleCommand.shortcut,
-              hostname: request.hostname
+              hostname: request.hostname,
+              href: request.href
             }));
           }
         });
@@ -81,7 +82,8 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
               var template = Handlebars.compile(response);
               sendResponse(template({
                 root: 'chrome-extension://' + chrome.runtime.id,
-                items: orderedFilteredTabs
+                items: orderedFilteredTabs,
+                hostname: request.hostname
               }));
             }
           });
@@ -97,6 +99,12 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
       var key = request.tabId + ':' + request.url;
       chrome.storage.local.get(key, function(data) {
         sendResponse(data[key] ? data[key].screenshot : false);
+      });
+      break;
+
+    case "new_tab":
+      chrome.tabs.create({
+        url: 'new.html'
       });
       break;
 
